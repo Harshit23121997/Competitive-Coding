@@ -18,13 +18,14 @@ public class Solution {
         Scanner sc=new Scanner(System.in);
         int t=sc.nextInt();
         for(int i=0;i<t;i++){
+
             long x=sc.nextLong();
             long y=sc.nextLong();
             long m=sc.nextLong();
             System.out.println(binpow(x,y,m));
             
         }
-        //System.out.println("Here");
-        //sc.close();
+        //System.out.println();
+        sc.close();
     }
 }

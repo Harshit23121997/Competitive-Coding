@@ -1,4 +1,4 @@
-package BFS.Akbar;
+package Akbar;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;

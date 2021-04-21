@@ -1,13 +1,12 @@
-package Water;
+package Miceandmaze;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
-
     static class Reader {
 		final private int BUFFER_SIZE = 1 << 16;
 		private DataInputStream din;
@@ -130,63 +129,83 @@ public class Main {
 			din.close();
 		}
 	}
-    static class Hex{
-        int x,y,height;
-        Hex(int x, int y,int h){
-            this.x=x;
-            this.y=y;
-            this.height=h;
+    static class Pair{
+        int first,second,chances;
+        Pair(int f,int s,int c){
+            this.first=f;
+            this.second=s;
+            this.chances=c;
         }
     }
-    static class HexComparator implements Comparator<Hex>{
-        public int compare(Hex h1,Hex h2){
-            if(h1.height>h2.height)
-                return 1;
-            if(h1.height<h2.height)
-                return -1;
-            return 0;
-        }
-    }
-    public static void main(String[] args) throws IOException {
-        System.setIn(new FileInputStream("BFS\\Water\\input.txt"));
-        Reader sc=new Reader();
-        int t=sc.nextInt();
-        while(t-- >0){
-            PriorityQueue<Hex> queue= new PriorityQueue<Hex>(10,new HexComparator());
-            int n=sc.nextInt();
-            int m=sc.nextInt();
-            boolean visited[][]=new boolean[n][m];
-            int mat[][]=new int[n][m];
-            for(int i=0;i<n;i++){
-                for(int j=0;j<m;j++){
-                    mat[i][j]=sc.nextInt();
-                    if(i==0 || j==0 || i==(n-1) || j==(m-1)){
-                        visited[i][j]=true;
-                        queue.add(new Hex(i,j,mat[i][j]));
-                    }
-                }
-            }
-            int level=Integer.MIN_VALUE;
-            int water=0;
-            int[][] dir = new int[][]{{0, 1},{0, -1},{1, 0},{-1, 0}};
-            while(!queue.isEmpty()){
-                Hex hex=queue.remove();
-                int x=hex.x,y=hex.y,h=hex.height;
-				//System.out.println("Popped is "+x+" "+y+" "+h);
-                if(h<level)
-                    water+=(level-h);
-                level=Math.max(level,h);
-                for(int i=0;i<dir.length;i++){
-                    int nx=x+dir[i][0];
-                    int ny=y+dir[i][1];
-                    if(nx<0 || ny<0 || nx>=n || ny>=m || visited[nx][ny] )
-                        continue;
-                    queue.add(new Hex(nx,ny,mat[nx][ny]));
-                    visited[nx][ny]=true;
-                }
-            }
-            System.out.println(water);
-        }
+	static class Graph{
+		int V;
+		ArrayList adj[];
+		int distance[];
+		boolean sptSet[];
+		Graph(int V,int e){
+			this.V=V;
+			distance=new int[V];
+			adj=new ArrayList[V];
+			sptSet=new boolean[V];
+			Arrays.fill(sptSet,false);
+			Arrays.fill(distance,Integer.MAX_VALUE);
+			distance[e]=0;
+			
+		}
+		void addEdge(int u,int v,int w){
+			adj[v-1][u-1]=w;
+		}
+		void djiskshtra(){
+			for(int i=0;i<V-1;i++){
+				int u=minKey();
+				for(int v=0;v<V;v++){
+					if(!sptSet[v] && adj[u][v]!=0 && distance[v]>distance[u]+adj[u][v]){
+						distance[v]=distance[u]+adj[u][v];
+					}
+				}
+			}
+		}
+		int minKey(){
+			int min=Integer.MAX_VALUE;
+			int index=-1;
+			for(int i=0;i<V;i++){
+				if(!sptSet[i] && min>distance[i]){
+					min=distance[i];
+					index=i;
+				}
+			}
+			return index;
+		}
+		int countMice(int t){
+			int count=0;
+			for(int i=0;i<V;i++){
+				if(distance[i]<=t){
+					count++;
+				}
+			}
+			return count;
+		}
+	}
 
+    public static void main(String[] args) throws IOException {
+        System.setIn(new FileInputStream("Miceandmaze\\input.txt"));
+        Reader sc=new Reader();
+        int n=sc.nextInt();
+		int e=sc.nextInt();
+		int t=sc.nextInt();
+		int m=sc.nextInt();
+		Graph g=new Graph(n,e);
+		while(m-- >0){
+			int u=sc.nextInt();
+			int v=sc.nextInt();
+			int w=sc.nextInt();
+			g.addEdge(u,v,w);
+
+		}
+		
+		g.djiskshtra();
+		System.out.println(g.countMice(t));
+        
     }
+    
 }

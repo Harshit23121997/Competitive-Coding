@@ -1,4 +1,4 @@
-package BFS.Nakanj;
+package Nakanj;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
